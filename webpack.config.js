@@ -1,10 +1,8 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/index.js',
-    devServer: {
-        contentBase: './dist',
-    },
+    mode: 'development',
+    entry: './src/client/index.js',
     output: {
         filename: 'main.js',
         path: path.resolve(__dirname, 'dist'),
@@ -13,9 +11,12 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
-                include: path.resolve(__dirname, 'src'),
+                exclude: /node_modules/,
                 loader: "babel-loader",
             },
         ],
+    },
+    devServer: {
+        contentBase: './dist',
     },
 };

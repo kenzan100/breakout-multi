@@ -1,3 +1,13 @@
+import io from 'socket.io-client';
+
+const socketProtocol = (window.location.protocol.includes('https')) ? 'wss' : 'ws';
+const host = `${socketProtocol}://${window.location.host}`;
+const socket = io(`${socketProtocol}://${host}`, { reconnection: false });
+
+socket.on('connect', () => {
+    console.log('client connected to server');
+});
+
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
@@ -12,7 +22,7 @@ var dy = -2;
 function keyDownHandler(e) {
     let val = e.key.replace('Arrow', '');
     const actions = {
-        'Left': () =>  { ( dx > 0 ) ? dx = -dx : dx },
+        'Left':  () => { ( dx > 0 ) ? dx = -dx : dx },
         'Right': () => { ( dx < 0 ) ? dx = -dx : dx },
         'Up':    () => { ( dy > 0 ) ? dy = -dy : dy },
         'Down':  () => { ( dy < 0 ) ? dy = -dy : dy },
