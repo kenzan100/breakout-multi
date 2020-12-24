@@ -15,9 +15,29 @@ const port = process.env.PORT || 3000;
 const server = app.listen(port);
 console.log(`server listening on port ${port}`);
 
+let players = {};
+let sockets = {};
+
 const io = socketio(server);
-console.log('a');
 io.on('connection', socket => {
     console.log('player connected', socket.id);
+    sockets[socket.id] = socket;
+    players[socket.id] = { x: 10, y: 10 };
+    socket.on('input', handleInput);
 });
-console.log('a');
+
+function handleInput(input) {
+    if (players[this.id]) {
+        players[this.id]['x'] += input.dx;
+        players[this.id]['y'] += input.dy;
+    }
+}
+
+function update() {
+    Object.keys(players).forEach(socketID => {
+        const socket = sockets[socketID];
+        socket.emit('update', players);
+    });
+}
+
+setInterval(update, 1000 / 10);

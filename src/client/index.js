@@ -1,9 +1,18 @@
 import io from 'socket.io-client';
+import { throttle } from 'throttle-debounce';
 
 const socketProtocol = (window.location.protocol.includes('https')) ? 'wss' : 'ws';
 const socket = io(`${socketProtocol}://${window.location.host}`, { reconnection: false });
-socket.on('connect', () => {
-    console.log('client connected to server');
+
+const connectedPromise = new Promise(resolve => {
+    socket.on('connect', () => {
+        console.log('client connected to server');
+        resolve();
+    });
+});
+
+connectedPromise.then(() => {
+    socket.on('update', processGameUpdate);
 });
 
 var canvas = document.getElementById("myCanvas");
@@ -14,20 +23,26 @@ document.addEventListener("keyup", keyUpHandler, false);
 
 var x = canvas.width/2;
 var y = canvas.height-30;
-var dx = 2;
-var dy = -2;
+var dx = 0;
+var dy = 0;
 
 function keyDownHandler(e) {
     let val = e.key.replace('Arrow', '');
     const actions = {
-        'Left':  () => { ( dx > 0 ) ? dx = -dx : dx },
-        'Right': () => { ( dx < 0 ) ? dx = -dx : dx },
-        'Up':    () => { ( dy > 0 ) ? dy = -dy : dy },
-        'Down':  () => { ( dy < 0 ) ? dy = -dy : dy },
+        'Left':  () => { dx = -2; dy = 0; },
+        'Right': () => { dx =  2; dy = 0; },
+        'Up':    () => { dy = -2; dx = 0; },
+        'Down':  () => { dy =  2; dx = 0; },
     };
     const fn = actions[val];
     if (typeof fn == 'function') { fn(); };
+    updateInput(dx, dy);
 }
+
+const updateInput = throttle(20, (dx, dy) => {
+    console.log('update');
+    socket.emit('input', { dx: dx, dy: dy });
+});
 
 function keyUpHandler() {
 }
@@ -40,12 +55,31 @@ function draw_recg() {
     ctx.closePath();
 }
 
-function draw() {
+let gameUpdates = [];
+
+function processGameUpdate(update) {
+    gameUpdates = [update];
+}
+
+function getCurrentState() {
+    if (gameUpdates.length > 0) {
+        return gameUpdates[gameUpdates.length - 1];
+    } else {
+        return { };
+    }
+}
+
+function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    draw_ball(x, y);
+
+    const updates = getCurrentState();
+
+    Object.keys(updates).forEach(playerID => {
+        const { x, y } = updates[playerID];
+        console.log(playerID, x, y);
+        draw_ball(x, y);
+    });
     change_direction(x, y);
-    x += dx;
-    y += dy;
 }
 
 function draw_ball(x, y) {
@@ -65,4 +99,4 @@ function change_direction(x, y) {
     }
 }
 
-setInterval(draw, 10);
+setInterval(render, 10);
