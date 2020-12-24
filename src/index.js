@@ -1,10 +1,28 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+
 var x = canvas.width/2;
 var y = canvas.height-30;
 var dx = 2;
 var dy = -2;
+
+function keyDownHandler(e) {
+    let val = e.key.replace('Arrow', '');
+    const actions = {
+        'Left': () =>  { ( dx > 0 ) ? dx = -dx : dx },
+        'Right': () => { ( dx < 0 ) ? dx = -dx : dx },
+        'Up':    () => { ( dy > 0 ) ? dy = -dy : dy },
+        'Down':  () => { ( dy < 0 ) ? dy = -dy : dy },
+    };
+    actions[val]();
+    console.log(val);
+}
+
+function keyUpHandler() {
+}
 
 function draw_recg() {
     ctx.beginPath();
@@ -18,7 +36,6 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     draw_ball(x, y);
     change_direction(x, y);
-    console.log(dx, dy);
     x += dx;
     y += dy;
 }
