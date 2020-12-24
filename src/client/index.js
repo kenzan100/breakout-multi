@@ -1,9 +1,7 @@
 import io from 'socket.io-client';
 
 const socketProtocol = (window.location.protocol.includes('https')) ? 'wss' : 'ws';
-const host = `${socketProtocol}://${window.location.host}`;
-const socket = io(`${socketProtocol}://${host}`, { reconnection: false });
-
+const socket = io(`${socketProtocol}://${window.location.host}`, { reconnection: false });
 socket.on('connect', () => {
     console.log('client connected to server');
 });
@@ -27,8 +25,8 @@ function keyDownHandler(e) {
         'Up':    () => { ( dy > 0 ) ? dy = -dy : dy },
         'Down':  () => { ( dy < 0 ) ? dy = -dy : dy },
     };
-    actions[val]();
-    console.log(val);
+    const fn = actions[val];
+    if (typeof fn == 'function') { fn(); };
 }
 
 function keyUpHandler() {

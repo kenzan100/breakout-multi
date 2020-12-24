@@ -16,11 +16,8 @@ const server = app.listen(port);
 console.log(`server listening on port ${port}`);
 
 const io = socketio(server);
-
+console.log('a');
 io.on('connection', socket => {
     console.log('player connected', socket.id);
 });
-
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/../../dist/index.html');
-});
+console.log('a');
