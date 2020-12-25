@@ -17,10 +17,10 @@ const inputs = {
     keyDownHandler(e) {
         let val = e.key.replace('Arrow', '');
         const actions = {
-            'Left':  () => { dx = -2; dy = 0; },
-            'Right': () => { dx =  2; dy = 0; },
-            'Up':    () => { dy = -2; dx = 0; },
-            'Down':  () => { dy =  2; dx = 0; },
+            'Left':  () => { dx = -3; dy = 0; },
+            'Right': () => { dx =  3; dy = 0; },
+            'Up':    () => { dy = -3; dx = 0; },
+            'Down':  () => { dy =  3; dx = 0; },
         };
         const fn = actions[val];
         if (typeof fn == 'function') { fn(); };
