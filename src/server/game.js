@@ -55,8 +55,7 @@ const createGame = () => ({
         this.coins.forEach(coin => {
             Object.keys(this.players).forEach(key => {
                 const player = this.players[key];
-                if (key !== coin.parentID &&
-                    this.closeEnough(player.x, player.y, coin.x, coin.y)) {
+                if (this.closeEnough(player.x, player.y, coin.x, coin.y)) {
                     player[coin.kind] += 1;
                     player.state = this.setState(player);
                     coinsToRemove.set(coin, true);

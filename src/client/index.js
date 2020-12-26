@@ -11,6 +11,11 @@ var global_y = canvas.height-30;
 var dx = 0;
 var dy = 0;
 
+const winLoseMenu = document.getElementById('win-lose-menu');
+const yourState = document.getElementById('your-state');
+const opponentState = document.getElementById('opponent-state');
+const winLoseResult = document.getElementById('win-lose-result');
+
 // input
 
 const inputs = {
@@ -56,13 +61,30 @@ const renderer = {
         setInterval(this.render.bind(this), 1000/60);
     },
 
+    fillInfoToWinLoseMenu(match) {
+        const updates = this.getCurrentState();
+        yourState.textContent = updates.players[socket.id].state;
+        const opponent = match.winner.ID == socket.id ? match.loser : match.winner;
+        opponentState.textContent = opponent.state;
+
+        if (opponent.ID === match.winner.ID) {
+            winLoseResult.textContent = "You Lost...";
+        } else {
+            winLoseResult.textContent = "You Win!";
+        }
+    },
+
     render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const updates = this.getCurrentState();
 
-        console.log('match', this.match);
-        if (this.match.loser && this.match.loser.ID == socket.id) {
+        console.log(this.match);
+        if (this.match.loser && this.match.winner) {
+            if (this.match.loser.ID == socket.id || this.match.winner.ID == socket.id ) {
+                this.fillInfoToWinLoseMenu(this.match);
+                winLoseMenu.classList.remove('hidden');
+            }
         }
 
         updates.coins.forEach(coin => {
@@ -95,7 +117,7 @@ const renderer = {
         if (this.gameUpdates.length > 0) {
             return this.gameUpdates[this.gameUpdates.length - 1];
         } else {
-            return { players: {}, coins: {} };
+            return { players: {}, coins: [] };
         }
     },
 };
