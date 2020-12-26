@@ -49,7 +49,7 @@ document.addEventListener("keyup", inputs.keyUpHandler.bind(inputs), false);
 
 const renderer = {
     gameUpdates: [],
-    matches: [],
+    match: {},
     fillStyle: { Rock: "black", Paper: "yellow", Scissor: "red", },
 
     start() {
@@ -61,7 +61,9 @@ const renderer = {
 
         const updates = this.getCurrentState();
 
-        console.log('matches', this.matches);
+        console.log('match', this.match);
+        if (this.match.loser && this.match.loser.ID == socket.id) {
+        }
 
         updates.coins.forEach(coin => {
             this.draw_coin(coin.x, coin.y, coin.kind);
@@ -115,6 +117,6 @@ connectedPromise.then(() => {
     socket.on('win', processWinLose);
 });
 function processGameUpdate(update) { renderer.gameUpdates = [update]; };
-function processWinLose(matches) { renderer.matches = [matches]; };
+function processWinLose(match) { renderer.match = match; };
 
 renderer.start();

@@ -6,10 +6,64 @@
         <style>
     	   * { padding: 0; margin: 0; }
     	   canvas { background: #eee; display: block; margin: 0 auto; }
+
+         html, body {
+             margin: 0;
+             padding: 0;
+             overflow: hidden;
+             overscroll-behavior: none;
+         }
+
+         .hidden {
+             display: none !important;
+         }
+
+         #win-lose-menu {
+             position: fixed;
+             top: 15%;
+             left: 50%;
+             transform: translateY(-50%) translateX(-50%);
+             padding: 20px 30px;
+             background-color: white;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             border-radius: 5px;
+             text-align: center;
+         }
         </style>
     </head>
     <body>
         <canvas id="myCanvas" width="480" height="320"></canvas>
+
+        <div id="win-lose-menu">
+            <h1>Rock, paper, scissors!</h1>
+            <p>You were <span id="your-state"></span></p>
+            <p><span id="opponent-name"></span> were <span id="opponent-state"></span></p>
+            <h2 id="win-lose-result"></h2>
+            <button id="retry-button">RETRY</button>
+        </div>
+
+        <div id="play-menu" class="hidden">
+            <h1>Rock paper scissors .io game</h1>
+            <p>
+                Press r ("Rock"), p ("Paper"), or s ("Scissor") to place objects.<br />
+                Touching objects will change your state to one of three.<br />
+                When you touch another player, you win or lose based on the <a href="https://en.wikipedia.org/wiki/Rock_paper_scissors" target="_blank">rule of Rock paper scissors.</a><br />
+                Use cursor keys to move.
+            </p>
+            <hr />
+            <p>
+                <!-- <br /> -->
+                Read the tutorial: <a href="https://victorzhou.com/blog/build-an-io-game-part-1/" target="_blank">How to Build an .io Game</a>.
+                <br />
+                See the source code on <a href="https://github.com/vzhou842/example-.io-game" target="_blank">Github</a>.
+                <br />
+                Created by <a href="https://twitter.com/kenzan100">Yuta Miyama</a>.
+            </p>
+            <hr />
+            <button id="play-button">PLAY</button>
+        </div>
 
         <script src="main.js"></script>
     </body>
