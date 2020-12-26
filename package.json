@@ -15,5 +15,8 @@
         "socket.io": "^3.0.4",
         "socket.io-client": "^3.0.4",
         "throttle-debounce": "^3.0.1"
+    },
+    "scripts": {
+        "server": "node src/server/server.js"
     }
 }
