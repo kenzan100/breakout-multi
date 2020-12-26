@@ -6,26 +6,34 @@ import { throttle } from 'throttle-debounce';
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
-var x = canvas.width/2;
-var y = canvas.height-30;
+var global_x = canvas.width/2;
+var global_y = canvas.height-30;
 var dx = 0;
 var dy = 0;
 
 // input
 
 const inputs = {
+    downActions: {
+        'Left':  () => { dx = -3; dy = 0; },
+        'Right': () => { dx =  3; dy = 0; },
+        'Up':    () => { dy = -3; dx = 0; },
+        'Down':  () => { dy =  3; dx = 0; },
+    },
     keyDownHandler(e) {
         let val = e.key.replace('Arrow', '');
-        const actions = {
-            'Left':  () => { dx = -3; dy = 0; },
-            'Right': () => { dx =  3; dy = 0; },
-            'Up':    () => { dy = -3; dx = 0; },
-            'Down':  () => { dy =  3; dx = 0; },
+        const fn = this.downActions[val];
+        if (typeof fn == 'function') {
+            fn();
+            updateInput(dx, dy);
         };
-        const fn = actions[val];
-        if (typeof fn == 'function') { fn(); };
-        updateInput(dx, dy);
     },
+    keyUpHandler(e) {
+        let val = e.key;
+        console.log(val);
+        const kind = { r: 'Rock', p: 'Paper', s: 'Scissor' };
+        if (typeof kind[val] == 'string') { coinInput(kind[val], global_x, global_y); }
+    }
 };
 
 const updateInput = throttle(20, (dx, dy) => {
@@ -33,7 +41,13 @@ const updateInput = throttle(20, (dx, dy) => {
     socket.emit('input', { dx: dx, dy: dy });
 });
 
-document.addEventListener("keydown", inputs.keyDownHandler, false);
+const coinInput = throttle(20, (kind, x, y) => {
+    console.log(kind, x, y);
+    socket.emit('coinPlace', { kind, x, y });
+});
+
+document.addEventListener("keydown", inputs.keyDownHandler.bind(inputs), false);
+document.addEventListener("keyup", inputs.keyUpHandler.bind(inputs), false);
 
 const renderer = {
     gameUpdates: [],
@@ -47,9 +61,10 @@ const renderer = {
 
         Object.keys(updates).forEach(playerID => {
             const { x, y } = updates[playerID];
+            global_x = x;
+            global_y = y;
             this.draw_ball(x, y);
         });
-        this.change_direction(x, y);
     },
     draw_ball(x, y) {
         ctx.beginPath();
@@ -65,14 +80,6 @@ const renderer = {
             return { };
         }
     },
-    change_direction(x, y) {
-        if (x + dx > canvas.width || x + dx < 0 ) {
-            dx = -dx;
-        }
-        if (y + dy > canvas.height || y + dy < 0) {
-            dy = -dy;
-        }
-    }
 };
 
 // Socket io client

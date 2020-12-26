@@ -1,6 +1,7 @@
 const createGame = () => ({
     players: {},
     sockets: {},
+    coins: [],
 
     start () {
         setInterval(this.update.bind(this), 1000 / 60);
@@ -20,8 +21,11 @@ const createGame = () => ({
     },
 
     update() {
-        Object.keys(this.players).forEach(socketID => {
-            const socket = this.sockets[socketID];
+        const coinsToRemove = {};
+
+        this.coins = this.coins.filter(coin => !coinsToRemove[coin]);
+
+        Object.values(this.sockets).forEach(socket => {
             socket.emit('update', this.players);
         });
     },
