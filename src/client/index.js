@@ -59,8 +59,12 @@ const renderer = {
 
         const updates = this.getCurrentState();
 
-        Object.keys(updates).forEach(playerID => {
-            const { x, y } = updates[playerID];
+        updates.coins.forEach(coin => {
+            this.draw_coin(coin.x, coin.y, coin.kind);
+        });
+
+        Object.keys(updates.players).forEach(playerID => {
+            const { x, y } = updates.players[playerID];
             global_x = x;
             global_y = y;
             this.draw_ball(x, y);
@@ -71,6 +75,12 @@ const renderer = {
         ctx.arc(x, y, 10, 0, Math.PI*2);
         ctx.fillStyle = "#0095DD";
         ctx.fill();
+        ctx.closePath();
+    },
+    draw_coin(x, y, kind) {
+        ctx.beginPath();
+        ctx.fillStyle = "black";
+        ctx.fillRect(x, y, 20, 20);
         ctx.closePath();
     },
     getCurrentState() {

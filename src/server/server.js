@@ -26,5 +26,7 @@ io.on('connection', socket => {
     console.log('player connected', socket.id);
     game.joinGame(socket);
     socket.on('input', handleInput);
+    socket.on('coinPlace', handleCoinPlacement);
 });
 function handleInput(input) { game.handleInput(this, input); }
+function handleCoinPlacement(input) { game.handleCoinPlacement(this, input); }

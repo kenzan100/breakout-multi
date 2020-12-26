@@ -20,14 +20,26 @@ const createGame = () => ({
         }
     },
 
+    handleCoinPlacement(socket, input) {
+        let newCoin = { x: input.x, y: input.y, kind: input.kind };
+        this.coins.push(newCoin);
+    },
+
     update() {
         const coinsToRemove = {};
 
         this.coins = this.coins.filter(coin => !coinsToRemove[coin]);
 
         Object.values(this.sockets).forEach(socket => {
-            socket.emit('update', this.players);
+            socket.emit('update', this.getCurrentState());
         });
+    },
+
+    getCurrentState() {
+        return {
+            players: this.players,
+            coins: this.coins,
+        };
     },
 });
 
