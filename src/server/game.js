@@ -29,7 +29,14 @@ const createGame = () => ({
     update() {
         const coinsToRemove = this.applyCollision();
 
-        this.coins = this.coins.filter(coin => !coinsToRemove[coin]);
+        if (Object.keys(coinsToRemove).length > 0) {
+            console.log(coinsToRemove);
+            console.log(this.coins.length);
+            console.log(this.coins.filter(coin => !coinsToRemove.get(coin)));
+            console.log(this.coins.length);
+        }
+
+        this.coins = this.coins.filter(coin => !coinsToRemove.get(coin));
 
         Object.values(this.sockets).forEach(socket => {
             socket.emit('update', this.getCurrentState());
@@ -44,14 +51,14 @@ const createGame = () => ({
     },
 
     applyCollision() {
-        const coinsToRemove = {};
+        const coinsToRemove = new Map();
         this.coins.forEach(coin => {
             Object.keys(this.players).forEach(key => {
                 const player = this.players[key];
                 if (key !== coin.parentID &&
                     this.closeEnough(player.x, player.y, coin.x, coin.y)) {
                     player[coin.kind] += 1;
-                    coinsToRemove[coin] = true;
+                    coinsToRemove.set(coin, true);
                 }
             });
         });

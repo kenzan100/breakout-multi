@@ -51,6 +51,12 @@ document.addEventListener("keyup", inputs.keyUpHandler.bind(inputs), false);
 
 const renderer = {
     gameUpdates: [],
+    fillStyle: {
+        Rock: "black",
+        Paper: "yellow",
+        Scissor: "red",
+    },
+
     start() {
         setInterval(this.render.bind(this), 1000/60);
     },
@@ -64,26 +70,26 @@ const renderer = {
         });
 
         Object.keys(updates.players).forEach(playerID => {
-            const { x, y } = updates.players[playerID];
+            const { x, y, Rock, Paper, Scissor } = updates.players[playerID];
             global_x = x;
             global_y = y;
-            this.draw_ball(x, y);
+            this.draw_ball(x, y, { Rock, Paper, Scissor });
         });
     },
-    draw_ball(x, y) {
+    draw_ball(x, y, rps) {
+        const max = Math.max.apply(null, Object.values(rps));
+        const idx = Object.values(rps).indexOf(max);
+        const kind = Object.keys(rps)[idx];
+
         ctx.beginPath();
         ctx.arc(x, y, 10, 0, Math.PI*2);
-        ctx.fillStyle = "#0095DD";
+        ctx.fillStyle = max !== 0 ? this.fillStyle[kind] : "#0095DD";
         ctx.fill();
         ctx.closePath();
     },
     draw_coin(x, y, kind) {
         ctx.beginPath();
-        ctx.fillStyle = {
-            Rock: "black",
-            Paper: "yellow",
-            Scissor: "red",
-        }[kind];
+        ctx.fillStyle = this.fillStyle[kind],
         ctx.fillRect(x - 10, y - 10, 20, 20);
         ctx.closePath();
     },
@@ -91,7 +97,7 @@ const renderer = {
         if (this.gameUpdates.length > 0) {
             return this.gameUpdates[this.gameUpdates.length - 1];
         } else {
-            return { };
+            return { players: {}, coins: {} };
         }
     },
 };
