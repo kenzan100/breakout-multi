@@ -43,7 +43,7 @@ const updateInput = throttle(20, (dx, dy) => {
 
 const coinInput = throttle(20, (kind, x, y) => {
     console.log(kind, x, y);
-    socket.emit('coinPlace', { kind, x, y });
+    socket.emit('coinPlace', { kind, x, y, parentID: socket.id });
 });
 
 document.addEventListener("keydown", inputs.keyDownHandler.bind(inputs), false);
@@ -79,8 +79,12 @@ const renderer = {
     },
     draw_coin(x, y, kind) {
         ctx.beginPath();
-        ctx.fillStyle = "black";
-        ctx.fillRect(x, y, 20, 20);
+        ctx.fillStyle = {
+            Rock: "black",
+            Paper: "yellow",
+            Scissor: "red",
+        }[kind];
+        ctx.fillRect(x - 10, y - 10, 20, 20);
         ctx.closePath();
     },
     getCurrentState() {
