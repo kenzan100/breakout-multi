@@ -71,6 +71,7 @@ const renderer = {
             winLoseResult.textContent = "You Lost...";
         } else {
             winLoseResult.textContent = "You Win!";
+            setTimeout(() => winLoseMenu.classList.add('hidden'), 1000);
         }
     },
 
@@ -79,11 +80,11 @@ const renderer = {
 
         const updates = this.getCurrentState();
 
-        console.log(this.match);
         if (this.match.loser && this.match.winner) {
             if (this.match.loser.ID == socket.id || this.match.winner.ID == socket.id ) {
                 this.fillInfoToWinLoseMenu(this.match);
                 winLoseMenu.classList.remove('hidden');
+                this.match = {};
             }
         }
 

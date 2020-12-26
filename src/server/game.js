@@ -8,7 +8,6 @@ const createGame = () => ({
     },
 
     joinGame(socket) {
-        console.log('aaa');
         this.sockets[socket.id] = socket;
         this.players[socket.id] = { ID: socket.id, x: 10, y: 10, Rock: 0, Paper: 0, Scissor: 0, state: null };
     },
@@ -36,6 +35,8 @@ const createGame = () => ({
             console.log('decided');
             this.sockets[match.winner.ID].emit('win', match);
             this.sockets[match.loser.ID].emit('lose', match);
+            delete this.sockets[match.loser.ID];
+            delete this.players[match.loser.ID];
         };
 
         Object.values(this.sockets).forEach(socket => {
