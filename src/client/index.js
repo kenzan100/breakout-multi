@@ -30,14 +30,12 @@ const inputs = {
     },
     keyUpHandler(e) {
         let val = e.key;
-        console.log(val);
         const kind = { r: 'Rock', p: 'Paper', s: 'Scissor' };
         if (typeof kind[val] == 'string') { coinInput(kind[val], global_x, global_y); }
     }
 };
 
 const updateInput = throttle(20, (dx, dy) => {
-    console.log('update');
     socket.emit('input', { dx: dx, dy: dy });
 });
 
@@ -52,30 +50,29 @@ document.addEventListener("keyup", inputs.keyUpHandler.bind(inputs), false);
 const renderer = {
     gameUpdates: [],
     matches: [],
-    fillStyle: {
-        Rock: "black",
-        Paper: "yellow",
-        Scissor: "red",
-    },
+    fillStyle: { Rock: "black", Paper: "yellow", Scissor: "red", },
 
     start() {
         setInterval(this.render.bind(this), 1000/60);
     },
+
     render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const updates = this.getCurrentState();
 
+        console.log('matches', this.matches);
+
         updates.coins.forEach(coin => {
             this.draw_coin(coin.x, coin.y, coin.kind);
         });
 
-        console.log(this.matches);
-
         Object.keys(updates.players).forEach(playerID => {
             const { x, y, Rock, Paper, Scissor, state } = updates.players[playerID];
-            global_x = x;
-            global_y = y;
+            if (socket.id === playerID ) {
+                global_x = x;
+                global_y = y;
+            }
             this.draw_ball(x, y, state);
         });
     },
@@ -114,7 +111,8 @@ const connectedPromise = new Promise(resolve => {
 
 connectedPromise.then(() => {
     socket.on('update', processGameUpdate);
-    socket.on('lost', processWinLose);
+    socket.on('lose', processWinLose);
+    socket.on('win', processWinLose);
 });
 function processGameUpdate(update) { renderer.gameUpdates = [update]; };
 function processWinLose(matches) { renderer.matches = [matches]; };

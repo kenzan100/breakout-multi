@@ -28,12 +28,14 @@ const createGame = () => ({
 
     update() {
         const coinsToRemove = this.applyCoinCollision();
+
         this.coins = this.coins.filter(coin => !coinsToRemove.get(coin));
 
         const match = this.applyPlayerCollision();
         if (match && match.winner && match.loser) {
-            this.sockets[match.winner.ID].emit('win', matches);
-            this.sockets[match.loser.ID].emit('lose', matches);
+            console.log('decided');
+            this.sockets[match.winner.ID].emit('win', match);
+            this.sockets[match.loser.ID].emit('lose', match);
         };
 
         Object.values(this.sockets).forEach(socket => {
@@ -78,7 +80,7 @@ const createGame = () => ({
     },
 
     applyPlayerCollision() {
-        const match = {};
+        let match = {};
 
         Object.keys(this.players).forEach(p1_key => {
             Object.keys(this.players).forEach(p2_key => {
@@ -87,7 +89,9 @@ const createGame = () => ({
                 const p1 = this.players[p1_key];
                 const p2 = this.players[p2_key];
                 if (this.closeEnough(p1.x, p1.y, p2.x, p2.y)) {
-                    return this.rock_paper_scissors(p1, p2);
+                    const res = this.rock_paper_scissors(p1, p2);
+                    match = res;
+                    return;
                 }
             });
         });
