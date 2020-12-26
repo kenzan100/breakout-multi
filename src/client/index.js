@@ -51,6 +51,7 @@ document.addEventListener("keyup", inputs.keyUpHandler.bind(inputs), false);
 
 const renderer = {
     gameUpdates: [],
+    matches: [],
     fillStyle: {
         Rock: "black",
         Paper: "yellow",
@@ -68,6 +69,8 @@ const renderer = {
         updates.coins.forEach(coin => {
             this.draw_coin(coin.x, coin.y, coin.kind);
         });
+
+        console.log(this.matches);
 
         Object.keys(updates.players).forEach(playerID => {
             const { x, y, Rock, Paper, Scissor, state } = updates.players[playerID];
@@ -109,7 +112,11 @@ const connectedPromise = new Promise(resolve => {
     });
 });
 
-connectedPromise.then(() => { socket.on('update', processGameUpdate); });
+connectedPromise.then(() => {
+    socket.on('update', processGameUpdate);
+    socket.on('lost', processWinLose);
+});
 function processGameUpdate(update) { renderer.gameUpdates = [update]; };
+function processWinLose(matches) { renderer.matches = [matches]; };
 
 renderer.start();

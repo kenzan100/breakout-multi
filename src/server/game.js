@@ -10,7 +10,7 @@ const createGame = () => ({
     joinGame(socket) {
         console.log('aaa');
         this.sockets[socket.id] = socket;
-        this.players[socket.id] = { x: 10, y: 10, Rock: 0, Paper: 0, Scissor: 0, state: null };
+        this.players[socket.id] = { ID: socket.id, x: 10, y: 10, Rock: 0, Paper: 0, Scissor: 0, state: null };
     },
 
     handleInput(socket, input) {
@@ -30,10 +30,11 @@ const createGame = () => ({
         const coinsToRemove = this.applyCoinCollision();
         this.coins = this.coins.filter(coin => !coinsToRemove.get(coin));
 
-        const matches = this.applyPlayerCollision();
-        matches.forEach(match => {
-            socket.emit('lost', match);
-        });
+        const match = this.applyPlayerCollision();
+        if (match && match.winner && match.loser) {
+            this.sockets[match.winner.ID].emit('win', matches);
+            this.sockets[match.loser.ID].emit('lose', matches);
+        };
 
         Object.values(this.sockets).forEach(socket => {
             socket.emit('update', this.getCurrentState());
@@ -55,7 +56,6 @@ const createGame = () => ({
                 if (key !== coin.parentID &&
                     this.closeEnough(player.x, player.y, coin.x, coin.y)) {
                     player[coin.kind] += 1;
-                    console.log(this.setState(player));
                     player.state = this.setState(player);
                     coinsToRemove.set(coin, true);
                 }
@@ -78,7 +78,7 @@ const createGame = () => ({
     },
 
     applyPlayerCollision() {
-        const matches = [];
+        const match = {};
 
         Object.keys(this.players).forEach(p1_key => {
             Object.keys(this.players).forEach(p2_key => {
@@ -87,11 +87,12 @@ const createGame = () => ({
                 const p1 = this.players[p1_key];
                 const p2 = this.players[p2_key];
                 if (this.closeEnough(p1.x, p1.y, p2.x, p2.y)) {
+                    return this.rock_paper_scissors(p1, p2);
                 }
             });
         });
 
-        return matches;
+        return match;
     },
 
     closeEnough(x1, y1, x2, y2) {
@@ -101,7 +102,25 @@ const createGame = () => ({
         return dist <= 10;
     },
 
-    rock_paper_scissors() {
+    rock_paper_scissors(p1, p2) {
+        const table = {
+            Rock:  { Rock: 'tie', Paper: 'lose', Scissor: 'win' },
+            Paper: { Rock: 'win', Paper: 'tie', Scissor: 'lose' },
+            Scissor: { Rock: 'lose', Paper: 'win', Scissor: 'tie' },
+        };
+
+        const match = {};
+        if (table[p1.state]) {
+            const p1_win_lose = table[p1.state][p2.state];
+            if (p1_win_lose === 'win') {
+                match.winner = p1;
+                match.loser = p2;
+            } else if (p1_win_lose === 'lose') {
+                match.winner = p2;
+                match.loser = p1;
+            }
+        }
+        return match;
     }
 });
 
