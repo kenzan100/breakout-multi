@@ -10,7 +10,7 @@ const createGame = () => ({
     joinGame(socket) {
         console.log('aaa');
         this.sockets[socket.id] = socket;
-        this.players[socket.id] = { x: 10, y: 10, Rock: 0, Paper: 0, Scissor: 0 };
+        this.players[socket.id] = { x: 10, y: 10, Rock: 0, Paper: 0, Scissor: 0, state: null };
     },
 
     handleInput(socket, input) {
@@ -27,16 +27,13 @@ const createGame = () => ({
     },
 
     update() {
-        const coinsToRemove = this.applyCollision();
-
-        if (Object.keys(coinsToRemove).length > 0) {
-            console.log(coinsToRemove);
-            console.log(this.coins.length);
-            console.log(this.coins.filter(coin => !coinsToRemove.get(coin)));
-            console.log(this.coins.length);
-        }
-
+        const coinsToRemove = this.applyCoinCollision();
         this.coins = this.coins.filter(coin => !coinsToRemove.get(coin));
+
+        const matches = this.applyPlayerCollision();
+        matches.forEach(match => {
+            socket.emit('lost', match);
+        });
 
         Object.values(this.sockets).forEach(socket => {
             socket.emit('update', this.getCurrentState());
@@ -50,7 +47,7 @@ const createGame = () => ({
         };
     },
 
-    applyCollision() {
+    applyCoinCollision() {
         const coinsToRemove = new Map();
         this.coins.forEach(coin => {
             Object.keys(this.players).forEach(key => {
@@ -58,6 +55,8 @@ const createGame = () => ({
                 if (key !== coin.parentID &&
                     this.closeEnough(player.x, player.y, coin.x, coin.y)) {
                     player[coin.kind] += 1;
+                    console.log(this.setState(player));
+                    player.state = this.setState(player);
                     coinsToRemove.set(coin, true);
                 }
             });
@@ -66,12 +65,44 @@ const createGame = () => ({
         return coinsToRemove;
     },
 
+    setState(player) {
+        const rps = { Rock: player.Rock, Paper: player.Paper, Scissor: player.Scissor };
+        const max = Math.max.apply(null, Object.values(rps));
+        let kind;
+
+        if (max !== 0) {
+            const idx = Object.values(rps).indexOf(max);
+            kind = Object.keys(rps)[idx];
+        }
+        return kind;
+    },
+
+    applyPlayerCollision() {
+        const matches = [];
+
+        Object.keys(this.players).forEach(p1_key => {
+            Object.keys(this.players).forEach(p2_key => {
+                if (p1_key === p2_key) { return; };
+
+                const p1 = this.players[p1_key];
+                const p2 = this.players[p2_key];
+                if (this.closeEnough(p1.x, p1.y, p2.x, p2.y)) {
+                }
+            });
+        });
+
+        return matches;
+    },
+
     closeEnough(x1, y1, x2, y2) {
         const dx = x1 - x2;
         const dy = y1 - y2;
         const dist = Math.sqrt(dx * dx + dy * dy);
         return dist <= 10;
     },
+
+    rock_paper_scissors() {
+    }
 });
 
 module.exports = createGame;
