@@ -27,7 +27,7 @@ const scissorImage = document.getElementById('scissor_img');
 
 const inputs = {
     downActions: {
-        'Left':  () => { dx = -3; dy = 0; global_dir = -90; },
+        'Left':  () => { dx = -3; dy = 0; global_dir = 270; },
         'Right': () => { dx =  3; dy = 0; global_dir =  90; },
         'Up':    () => { dy = -3; dx = 0; global_dir =   0; },
         'Down':  () => { dy =  3; dx = 0; global_dir = 180; },
@@ -52,8 +52,7 @@ const updateInput = throttle(20, (dx, dy) => {
 });
 
 const coinInput = throttle(20, (kind, x, y) => {
-    console.log(kind, x, y);
-    socket.emit('coinPlace', { kind, x, y, parentID: socket.id });
+    socket.emit('coinPlace', { kind, x, y });
 });
 
 document.addEventListener("keydown", inputs.keyDownHandler.bind(inputs), false);

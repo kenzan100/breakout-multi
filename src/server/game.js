@@ -2,6 +2,12 @@ const createGame = () => ({
     players: {},
     sockets: {},
     coins: [],
+    dirOffset: {
+        0:   { x:   0, y: -50 },
+        90:  { x:  50, y:   0 },
+        180: { x:   0, y:  50 },
+        270: { x: -50, y:   0 },
+    },
 
     start () {
         setInterval(this.update.bind(this), 1000 / 60);
@@ -24,7 +30,9 @@ const createGame = () => ({
 
     handleCoinPlacement(socket, input) {
         console.log(input);
-        let newCoin = { x: input.x, y: input.y, kind: input.kind, parentID: input.parentID };
+        const player = this.players[socket.id];
+        const offset = this.dirOffset[player.dir];
+        let newCoin = { x: input.x + offset.x, y: input.y + offset.y, kind: input.kind, parentID: socket.id };
         this.coins.push(newCoin);
     },
 
@@ -35,7 +43,6 @@ const createGame = () => ({
 
         const match = this.applyPlayerCollision();
         if (match && match.winner && match.loser) {
-            console.log('decided');
             this.sockets[match.winner.ID].emit('win', match);
             this.sockets[match.loser.ID].emit('lose', match);
             delete this.sockets[match.loser.ID];
