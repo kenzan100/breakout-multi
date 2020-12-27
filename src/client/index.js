@@ -11,10 +11,14 @@ var global_y = canvas.height-30;
 var dx = 0;
 var dy = 0;
 
+const TO_RADIANS = Math.PI/180;
+
 const winLoseMenu = document.getElementById('win-lose-menu');
 const yourState = document.getElementById('your-state');
 const opponentState = document.getElementById('opponent-state');
 const winLoseResult = document.getElementById('win-lose-result');
+
+const rpsImage = document.getElementById('rps_img');
 
 // input
 
