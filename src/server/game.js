@@ -9,13 +9,16 @@ const createGame = () => ({
 
     joinGame(socket) {
         this.sockets[socket.id] = socket;
-        this.players[socket.id] = { ID: socket.id, x: 10, y: 10, Rock: 0, Paper: 0, Scissor: 0, state: null };
+        this.players[socket.id] = {
+            ID: socket.id, x: 10, y: 10, Rock: 0, Paper: 0, Scissor: 0, state: 'Rock', dir: 0
+        };
     },
 
     handleInput(socket, input) {
         if (this.players[socket.id]) {
             this.players[socket.id]['x'] += input.dx;
             this.players[socket.id]['y'] += input.dy;
+            this.players[socket.id]['dir'] = input.dir;
         }
     },
 
@@ -56,7 +59,7 @@ const createGame = () => ({
         this.coins.forEach(coin => {
             Object.keys(this.players).forEach(key => {
                 const player = this.players[key];
-                if (this.closeEnough(player.x, player.y, coin.x, coin.y)) {
+                if (this.closeEnough(player.x, player.y, coin.x, coin.y, 10)) {
                     player[coin.kind] += 1;
                     player.state = this.setState(player);
                     coinsToRemove.set(coin, true);
@@ -88,7 +91,7 @@ const createGame = () => ({
 
                 const p1 = this.players[p1_key];
                 const p2 = this.players[p2_key];
-                if (this.closeEnough(p1.x, p1.y, p2.x, p2.y)) {
+                if (this.closeEnough(p1.x, p1.y, p2.x, p2.y, 30)) {
                     const res = this.rock_paper_scissors(p1, p2);
                     match = res;
                     return;
@@ -99,11 +102,11 @@ const createGame = () => ({
         return match;
     },
 
-    closeEnough(x1, y1, x2, y2) {
+    closeEnough(x1, y1, x2, y2, threshold) {
         const dx = x1 - x2;
         const dy = y1 - y2;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        return dist <= 10;
+        return dist <= (threshold || 10);
     },
 
     rock_paper_scissors(p1, p2) {

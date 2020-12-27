@@ -19,8 +19,9 @@ const yourState = document.getElementById('your-state');
 const opponentState = document.getElementById('opponent-state');
 const winLoseResult = document.getElementById('win-lose-result');
 
-const rpsImage = document.getElementById('rps_img');
 const rockImage = document.getElementById('rock_img');
+const paperImage = document.getElementById('paper_img');
+const scissorImage = document.getElementById('scissor_img');
 
 // input
 
@@ -47,7 +48,7 @@ const inputs = {
 };
 
 const updateInput = throttle(20, (dx, dy) => {
-    socket.emit('input', { dx: dx, dy: dy });
+    socket.emit('input', { dx: dx, dy: dy, dir: global_dir });
 });
 
 const coinInput = throttle(20, (kind, x, y) => {
@@ -62,6 +63,7 @@ const renderer = {
     gameUpdates: [],
     match: {},
     fillStyle: { Rock: "black", Paper: "yellow", Scissor: "red", },
+    imageMap:  { Rock: rockImage, Paper: paperImage, Scissor: scissorImage },
 
     start() {
         setInterval(this.render.bind(this), 1000/60);
@@ -99,25 +101,26 @@ const renderer = {
         });
 
         Object.keys(updates.players).forEach(playerID => {
-            const { x, y, Rock, Paper, Scissor, state } = updates.players[playerID];
+            const { x, y, Rock, Paper, Scissor, state, dir } = updates.players[playerID];
             if (socket.id === playerID ) {
                 global_x = x;
                 global_y = y;
             }
-            this.draw_ball(x, y, state);
+            this.draw_rps(x, y, state, dir);
         });
     },
-    draw_rps(x, y, state) {
+    draw_rps(x, y, state, dir) {
+        // https://stackoverflow.com/questions/46134651/rotating-single-image-in-canvas-for-game
         ctx.setTransform(1,0,0,1,x,y);
 
-        ctx.rotate(TO_RADIANS*global_dir);
+        ctx.rotate(TO_RADIANS*dir);
 
-        ctx.drawImage(rockImage, -rockImage.width/2, -rockImage.height/2);
+        ctx.drawImage(this.imageMap[state], -rockImage.width/4, -rockImage.height/2);
 
         ctx.setTransform(1,0,0,1,0,0);
     },
-    draw_ball(x, y, state) {
-        this.draw_rps(x, y, state);
+    draw_ball(x, y, state, dir) {
+        this.draw_rps(x, y, state, dir);
 
         ctx.beginPath();
         ctx.arc(x, y, 10, 0, Math.PI*2);
