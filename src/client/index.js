@@ -23,6 +23,10 @@ const rockImage = document.getElementById('rock_img');
 const paperImage = document.getElementById('paper_img');
 const scissorImage = document.getElementById('scissor_img');
 
+const coinRockImage = document.getElementById('coin_rock_img');
+const coinPaperImage = document.getElementById('coin_paper_img');
+const coinScissorImage = document.getElementById('coin_scissor_img');
+
 // input
 
 const inputs = {
@@ -63,6 +67,7 @@ const renderer = {
     match: {},
     fillStyle: { Rock: "black", Paper: "yellow", Scissor: "red", },
     imageMap:  { Rock: rockImage, Paper: paperImage, Scissor: scissorImage },
+    coinImageMap:  { Rock: coinRockImage, Paper: coinPaperImage, Scissor: coinScissorImage },
 
     start() {
         setInterval(this.render.bind(this), 1000/60);
@@ -114,24 +119,18 @@ const renderer = {
 
         ctx.rotate(TO_RADIANS*dir);
 
-        ctx.drawImage(this.imageMap[state], -rockImage.width/4, -rockImage.height/2);
+        const img = this.imageMap[state];
+        ctx.drawImage(img, -img.width/4, -img.height/2);
 
         ctx.setTransform(1,0,0,1,0,0);
     },
-    draw_ball(x, y, state, dir) {
-        this.draw_rps(x, y, state, dir);
-
-        ctx.beginPath();
-        ctx.arc(x, y, 10, 0, Math.PI*2);
-        ctx.fillStyle = !!state ? this.fillStyle[state] : "#0095DD";
-        ctx.fill();
-        ctx.closePath();
-    },
     draw_coin(x, y, kind) {
-        ctx.beginPath();
-        ctx.fillStyle = this.fillStyle[kind],
-        ctx.fillRect(x - 10, y - 10, 20, 20);
-        ctx.closePath();
+        ctx.setTransform(1,0,0,1,x,y);
+
+        const img = this.coinImageMap[kind];
+        ctx.drawImage(img, -img.width/2, -img.height/2);
+
+        ctx.setTransform(1,0,0,1,0,0);
     },
     getCurrentState() {
         if (this.gameUpdates.length > 0) {

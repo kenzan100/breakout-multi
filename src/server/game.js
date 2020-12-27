@@ -2,14 +2,18 @@ const createGame = () => ({
     players: {},
     sockets: {},
     coins: [],
+    startAt: 0,
+    lastSpeedUpAt: 0,
+    speedCoefficient: 1,
     dirOffset: {
-        0:   { x:   0, y: -50 },
-        90:  { x:  50, y:   0 },
-        180: { x:   0, y:  50 },
-        270: { x: -50, y:   0 },
+        0:   { x:    0, y: -100 },
+        90:  { x:  100, y:   0 },
+        180: { x:    0, y:  100 },
+        270: { x: -100, y:   0 },
     },
 
     start () {
+        this.startAt = Date.now();
         setInterval(this.update.bind(this), 1000 / 60);
     },
 
@@ -22,8 +26,8 @@ const createGame = () => ({
 
     handleInput(socket, input) {
         if (this.players[socket.id]) {
-            this.players[socket.id]['x'] += input.dx;
-            this.players[socket.id]['y'] += input.dy;
+            this.players[socket.id]['x'] += input.dx * this.speedCoefficient;
+            this.players[socket.id]['y'] += input.dy * this.speedCoefficient;
             this.players[socket.id]['dir'] = input.dir;
         }
     },
@@ -37,6 +41,13 @@ const createGame = () => ({
     },
 
     update() {
+        const elapsed = Date.now() - this.startAt;
+        if (elapsed - this.lastSpeedUpAt > 5000) {
+            console.log(this.speedCoefficient);
+            this.speedCoefficient *= 1.01;
+            this.lastSpeedUpAt = elapsed;
+        }
+
         const coinsToRemove = this.applyCoinCollision();
 
         this.coins = this.coins.filter(coin => !coinsToRemove.get(coin));
@@ -66,7 +77,7 @@ const createGame = () => ({
         this.coins.forEach(coin => {
             Object.keys(this.players).forEach(key => {
                 const player = this.players[key];
-                if (this.closeEnough(player.x, player.y, coin.x, coin.y, 10)) {
+                if (this.closeEnough(player.x, player.y, coin.x, coin.y, 30)) {
                     player[coin.kind] += 1;
                     player.state = this.setState(player);
                     coinsToRemove.set(coin, true);
