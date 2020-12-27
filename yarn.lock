@@ -2365,6 +2365,11 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
+helmet@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/helmet/-/helmet-4.3.0.tgz#1ceac7191c4643469277eb16ccbe32ca3cf14e76"
+  integrity sha512-Ab4a7b3Jt+E7Ifqc4jZ3oApIJ2JR+oAtLxT7Zhj9YyEY7/EtgVRbRABbUnpVwhjTh0vpsAwY/CdRxyPgTBAcbw==
+
 hpack.js@^2.1.6:
   version "2.1.6"
   resolved "https://registry.yarnpkg.com/hpack.js/-/hpack.js-2.1.6.tgz#87774c0949e513f42e84575b3c45681fade2a0b2"

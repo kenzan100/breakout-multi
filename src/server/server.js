@@ -2,6 +2,7 @@ const express = require('express');
 const socketio = require('socket.io');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
+const helmet = require('helmet');
 
 const webpackConfig = require('../../webpack.config.js');
 const createGame = require('./game');
@@ -9,6 +10,7 @@ const createGame = require('./game');
 // Spin up server
 const app = express();
 const compiler = webpack(webpackConfig);
+app.use(helmet());
 app.use(express.static('dist'));
 app.use(webpackDevMiddleware(compiler));
 

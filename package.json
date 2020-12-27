@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "express": "^4.17.1",
+        "helmet": "^4.3.0",
         "socket.io": "^3.0.4",
         "socket.io-client": "^3.0.4",
         "throttle-debounce": "^3.0.1"
