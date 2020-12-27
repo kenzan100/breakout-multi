@@ -1,7 +1,6 @@
 const path = require('path');
 
 module.exports = {
-    mode: 'development',
     entry: './src/client/index.js',
     output: {
         filename: 'main.js',
@@ -15,8 +14,5 @@ module.exports = {
                 loader: "babel-loader",
             },
         ],
-    },
-    devServer: {
-        contentBase: './dist',
     },
 };
