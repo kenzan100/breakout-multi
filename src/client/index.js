@@ -8,6 +8,7 @@ var ctx = canvas.getContext("2d");
 
 var global_x = canvas.width/2;
 var global_y = canvas.height-30;
+var global_dir = 0;
 var dx = 0;
 var dy = 0;
 
@@ -19,15 +20,16 @@ const opponentState = document.getElementById('opponent-state');
 const winLoseResult = document.getElementById('win-lose-result');
 
 const rpsImage = document.getElementById('rps_img');
+const rockImage = document.getElementById('rock_img');
 
 // input
 
 const inputs = {
     downActions: {
-        'Left':  () => { dx = -3; dy = 0; },
-        'Right': () => { dx =  3; dy = 0; },
-        'Up':    () => { dy = -3; dx = 0; },
-        'Down':  () => { dy =  3; dx = 0; },
+        'Left':  () => { dx = -3; dy = 0; global_dir = -90; },
+        'Right': () => { dx =  3; dy = 0; global_dir =  90; },
+        'Up':    () => { dy = -3; dx = 0; global_dir =   0; },
+        'Down':  () => { dy =  3; dx = 0; global_dir = 180; },
     },
     keyDownHandler(e) {
         let val = e.key.replace('Arrow', '');
@@ -105,7 +107,18 @@ const renderer = {
             this.draw_ball(x, y, state);
         });
     },
+    draw_rps(x, y, state) {
+        ctx.setTransform(1,0,0,1,x,y);
+
+        ctx.rotate(TO_RADIANS*global_dir);
+
+        ctx.drawImage(rockImage, -rockImage.width/2, -rockImage.height/2);
+
+        ctx.setTransform(1,0,0,1,0,0);
+    },
     draw_ball(x, y, state) {
+        this.draw_rps(x, y, state);
+
         ctx.beginPath();
         ctx.arc(x, y, 10, 0, Math.PI*2);
         ctx.fillStyle = !!state ? this.fillStyle[state] : "#0095DD";
