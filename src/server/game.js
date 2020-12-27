@@ -26,8 +26,8 @@ const createGame = () => ({
 
     handleInput(socket, input) {
         if (this.players[socket.id]) {
-            this.players[socket.id]['x'] += input.dx * this.speedCoefficient;
-            this.players[socket.id]['y'] += input.dy * this.speedCoefficient;
+            this.players[socket.id]['x'] += input.dx; // * this.speedCoefficient;
+            this.players[socket.id]['y'] += input.dy; // * this.speedCoefficient;
             this.players[socket.id]['dir'] = input.dir;
         }
     },
