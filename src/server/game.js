@@ -43,7 +43,6 @@ const createGame = () => ({
     update() {
         const elapsed = Date.now() - this.startAt;
         if (elapsed - this.lastSpeedUpAt > 5000) {
-            console.log(this.speedCoefficient);
             this.speedCoefficient *= 1.01;
             this.lastSpeedUpAt = elapsed;
         }
