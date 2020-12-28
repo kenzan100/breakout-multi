@@ -31,24 +31,27 @@ const coinScissorImage = document.getElementById('coin_scissor_img');
 
 const inputs = {
     downActions: {
-        'Left':  () => { dx = -3; dy = 0; global_dir = 270; },
-        'Right': () => { dx =  3; dy = 0; global_dir =  90; },
-        'Up':    () => { dy = -3; dx = 0; global_dir =   0; },
-        'Down':  () => { dy =  3; dx = 0; global_dir = 180; },
+        'Left':  () => { dx = -2; dy = 0; global_dir = 270; },
+        'Right': () => { dx =  2; dy = 0; global_dir =  90; },
+        'Up':    () => { dy = -2; dx = 0; global_dir =   0; },
+        'Down':  () => { dy =  2; dx = 0; global_dir = 180; },
     },
-    keyDownHandler(e) {
+    moveAction(e) {
         let val = e.key.replace('Arrow', '');
         const fn = this.downActions[val];
-        if (typeof fn == 'function') {
-            fn();
-            updateInput(dx, dy);
-        };
+        if (typeof fn == 'function') { fn(); updateInput(dx, dy); };
     },
-    keyUpHandler(e) {
+    coinAction(e) {
         let val = e.key;
         const kind = { r: 'Rock', p: 'Paper', s: 'Scissor' };
         if (typeof kind[val] == 'string') { coinInput(kind[val], global_x, global_y); }
-    }
+    },
+    keyDownHandler(e) {
+        this.moveAction(e);
+    },
+    keyUpHandler(e) {
+        this.coinAction(e);
+    },
 };
 
 const updateInput = throttle(20, (dx, dy) => {

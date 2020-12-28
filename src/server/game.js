@@ -20,18 +20,16 @@ const createGame = () => ({
     joinGame(socket) {
         this.sockets[socket.id] = socket;
         this.players[socket.id] = {
-            ID: socket.id, x: 10, y: 10, Rock: 0, Paper: 0, Scissor: 0, state: 'Rock', dir: 0
+            ID: socket.id, x: 10, y: 10, dx: 0, dy: 0, Rock: 0, Paper: 0, Scissor: 0, state: 'Rock', dir: 0
         };
     },
 
     handleInput(socket, input) {
         if (this.players[socket.id]) {
             const player = this.players[socket.id];
-            if (this.withinBoundary(player.x + input.dx, player.y + input.dy)) {
-                player['x'] += input.dx; // * this.speedCoefficient;
-                player['y'] += input.dy; // * this.speedCoefficient;
-            }
-            player['dir'] = input.dir;
+            player.dx = input.dx;
+            player.dy = input.dy;
+            player.dir = input.dir;
         }
     },
 
@@ -71,6 +69,13 @@ const createGame = () => ({
         };
 
         Object.values(this.sockets).forEach(socket => {
+            const player = this.players[socket.id];
+
+            if (this.withinBoundary(player.x + player.dx, player.y + player.dy)) {
+                player.x += player.dx; // * this.speedCoefficient;
+                player.y += player.dy; // * this.speedCoefficient;
+            }
+
             socket.emit('update', this.getCurrentState());
         });
     },
