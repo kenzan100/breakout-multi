@@ -2,10 +2,11 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Gamedev Canvas Workshop</title>
+        <title>Rock Paper Scissors io game</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <style>
     	   * { padding: 0; margin: 0; }
-    	   canvas { background: #eee; display: block; margin: 0 auto; }
+    	   canvas { background: #eee; display: block; margin: 20px auto 0; }
 
          html, body {
              margin: 0;
@@ -18,23 +19,30 @@
              display: none !important;
          }
 
-         #win-lose-menu {
-             position: fixed;
-             top: 15%;
-             left: 50%;
-             transform: translateY(-50%) translateX(-50%);
+         #win-lose-menu, #play-menu {
              padding: 20px 30px;
              background-color: white;
              display: flex;
              flex-direction: column;
              align-items: center;
              border-radius: 5px;
+         }
+
+         #play-menu p {
+             padding: 10px 10px;
+         }
+
+         #win-lose-menu {
+             position: fixed;
+             top: 15%;
+             left: 50%;
+             transform: translateY(-50%) translateX(-50%);
              text-align: center;
          }
         </style>
     </head>
     <body>
-        <canvas id="myCanvas" width="480" height="320"></canvas>
+        <canvas id="myCanvas" width="640" height="320"></canvas>
 
         <div id="win-lose-menu" class="hidden">
             <h1>Rock, paper, scissors!</h1>
@@ -52,16 +60,15 @@
         <img id="coin_scissor_img" src="coin-s-images-rock-paper-scissors.png" class="hidden" />
 
         <div id="play-menu">
+            <div>
             <h1>Rock paper scissors .io game</h1>
-            <ul>
-                <li>
-                    Use cursor keys to move.
-                </li>
-            </ul>
             <p>
-                Press r ("Rock"), p ("Paper"), or s ("Scissor") to place objects.<br />
-                Touching objects will change your state to one of three.<br />
-                When you touch another player, you win or lose based on the <a href="https://en.wikipedia.org/wiki/Rock_paper_scissors" target="_blank">rule of Rock paper scissors.</a><br />
+                Use cursor keys to move.<br />
+                Press r ("Rock"), p ("Paper"), or s ("Scissor") to place "coins".<br />
+            </p>
+            <p>
+                Touching "coins" will change your charactor to the matching Rock, Paper, or Scissor.<br />
+                When you touch another player, you win or lose based on <a href="https://en.wikipedia.org/wiki/Rock_paper_scissors" target="_blank">the rule of Rock paper scissors.</a><br />
 
             </p>
             <hr />
@@ -73,6 +80,7 @@
                 <br />
                 Created by <a href="https://twitter.com/kenzan100">Yuta Miyama</a>.
             </p>
+            </div>
         </div>
 
         <script src="main.js"></script>
