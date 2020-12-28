@@ -26,10 +26,17 @@ const createGame = () => ({
 
     handleInput(socket, input) {
         if (this.players[socket.id]) {
-            this.players[socket.id]['x'] += input.dx; // * this.speedCoefficient;
-            this.players[socket.id]['y'] += input.dy; // * this.speedCoefficient;
-            this.players[socket.id]['dir'] = input.dir;
+            const player = this.players[socket.id];
+            if (this.withinBoundary(player.x + input.dx, player.y + input.dy)) {
+                player['x'] += input.dx; // * this.speedCoefficient;
+                player['y'] += input.dy; // * this.speedCoefficient;
+            }
+            player['dir'] = input.dir;
         }
+    },
+
+    withinBoundary(x, y) {
+        return (x >= 10 && y >= 10 && x <= 630 && y <= 310);
     },
 
     handleCoinPlacement(socket, input) {
