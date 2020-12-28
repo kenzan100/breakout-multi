@@ -40,6 +40,11 @@ const createGame = () => ({
         this.coins.push(newCoin);
     },
 
+    removePlayer(sockeID) {
+        delete this.sockets[sockeID];
+        delete this.players[sockeID];
+    },
+
     update() {
         const elapsed = Date.now() - this.startAt;
         if (elapsed - this.lastSpeedUpAt > 5000) {
@@ -55,8 +60,7 @@ const createGame = () => ({
         if (match && match.winner && match.loser) {
             this.sockets[match.winner.ID].emit('win', match);
             this.sockets[match.loser.ID].emit('lose', match);
-            delete this.sockets[match.loser.ID];
-            delete this.players[match.loser.ID];
+            this.removePlayer(match.loser.ID);
         };
 
         Object.values(this.sockets).forEach(socket => {

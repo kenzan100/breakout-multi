@@ -33,6 +33,8 @@ io.on('connection', socket => {
     game.joinGame(socket);
     socket.on('input', handleInput);
     socket.on('coinPlace', handleCoinPlacement);
+    socket.on('disconnect', onDisconnect);
 });
 function handleInput(input) { game.handleInput(this, input); }
 function handleCoinPlacement(input) { game.handleCoinPlacement(this, input); }
+function onDisconnect() { game.removePlayer(this.id); }
