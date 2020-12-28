@@ -40,9 +40,11 @@ const createGame = () => ({
     handleCoinPlacement(socket, input) {
         console.log(input);
         const player = this.players[socket.id];
-        const offset = this.dirOffset[player.dir];
-        let newCoin = { x: input.x + offset.x, y: input.y + offset.y, kind: input.kind, parentID: socket.id };
-        this.coins.push(newCoin);
+        if (player) {
+            const offset = this.dirOffset[player.dir];
+            let newCoin = { x: input.x + offset.x, y: input.y + offset.y, kind: input.kind, parentID: socket.id };
+            this.coins.push(newCoin);
+        }
     },
 
     removePlayer(sockeID) {
