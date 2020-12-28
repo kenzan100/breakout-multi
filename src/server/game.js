@@ -66,8 +66,9 @@ const createGame = () => ({
         const match = this.applyPlayerCollision();
         if (match && match.winner && match.loser) {
             this.sockets[match.winner.ID].emit('win', match);
-            this.sockets[match.loser.ID].emit('lose', match);
-            this.removePlayer(match.loser.ID);
+            const loser = this.sockets[match.loser.ID];
+            loser.emit('lose', match);
+            this.removePlayer(loser.id);
         };
 
         Object.values(this.sockets).forEach(socket => {

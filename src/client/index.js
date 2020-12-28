@@ -74,9 +74,10 @@ const renderer = {
     fillStyle: { Rock: "black", Paper: "yellow", Scissor: "red", },
     imageMap:  { Rock: rockImage, Paper: paperImage, Scissor: scissorImage },
     coinImageMap:  { Rock: coinRockImage, Paper: coinPaperImage, Scissor: coinScissorImage },
+    currentInterval: null,
 
     start() {
-        setInterval(this.render.bind(this), 1000/60);
+        this.currentInterval = setInterval(this.render.bind(this), 1000/60);
     },
 
     fillInfoToWinLoseMenu(match) {
@@ -87,6 +88,8 @@ const renderer = {
 
         if (opponent.ID === match.winner.ID) {
             winLoseResult.textContent = "You Lost...";
+            socket.disconnect();
+            clearInterval(this.currentInterval);
         } else {
             winLoseResult.textContent = "You Beat another player! Keep going!";
             setTimeout(() => winLoseMenu.classList.add('hidden'), 2000);
