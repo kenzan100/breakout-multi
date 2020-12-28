@@ -27,6 +27,9 @@ const coinRockImage = document.getElementById('coin_rock_img');
 const coinPaperImage = document.getElementById('coin_paper_img');
 const coinScissorImage = document.getElementById('coin_scissor_img');
 
+const yourShapeStatus = document.getElementById('your-shape-status');
+const yourShapeNow = document.getElementById('your-shape-now');
+
 // input
 
 const inputs = {
@@ -85,9 +88,15 @@ const renderer = {
         if (opponent.ID === match.winner.ID) {
             winLoseResult.textContent = "You Lost...";
         } else {
-            winLoseResult.textContent = "You Win!";
-            setTimeout(() => winLoseMenu.classList.add('hidden'), 1000);
+            winLoseResult.textContent = "You Beat another player! Keep going!";
+            setTimeout(() => winLoseMenu.classList.add('hidden'), 2000);
         }
+    },
+
+    fillPlayerStatusHud(updates) {
+        const player = updates.players[socket.id];
+        yourShapeNow.textContent = player.state;
+        yourShapeStatus.textContent = `Rock: ${player.Rock} | Paper: ${player.Paper} | Scissor: ${player.Scissor}`;
     },
 
     render() {
@@ -102,6 +111,8 @@ const renderer = {
                 this.match = {};
             }
         }
+
+        this.fillPlayerStatusHud(updates);
 
         updates.coins.forEach(coin => {
             this.draw_coin(coin.x, coin.y, coin.kind);

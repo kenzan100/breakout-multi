@@ -20,7 +20,7 @@ const createGame = () => ({
     joinGame(socket) {
         this.sockets[socket.id] = socket;
         this.players[socket.id] = {
-            ID: socket.id, x: 10, y: 10, dx: 0, dy: 0, Rock: 0, Paper: 0, Scissor: 0, state: 'Rock', dir: 0
+            ID: socket.id, x: 10, y: 10, dx: 0, dy: 0, Rock: 1, Paper: 0, Scissor: 0, state: 'Rock', dir: 0
         };
     },
 
