@@ -38,3 +38,7 @@ io.on('connection', socket => {
 function handleInput(input) { game.handleInput(this, input); }
 function handleCoinPlacement(input) { game.handleCoinPlacement(this, input); }
 function onDisconnect() { game.removePlayer(this.id); }
+
+const botManager = require('./bot');
+botManager.cheat = game.cheatObject;
+botManager.start(game);

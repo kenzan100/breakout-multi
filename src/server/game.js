@@ -12,15 +12,24 @@ const createGame = () => ({
         270: { x: -100, y:   0 },
     },
 
+    // for bot to know the complete world info
+    cheatObject: { numPlayers: 0 },
+
     start () {
         this.startAt = Date.now();
         setInterval(this.update.bind(this), 1000 / 60);
     },
 
-    joinGame(socket) {
-        this.sockets[socket.id] = socket;
+    joinGame(socket, isHuman = true, x = 10, y = 10) {
+        if (isHuman) {
+            this.sockets[socket.id] = socket;
+        }
         this.players[socket.id] = {
-            ID: socket.id, x: 10, y: 10, dx: 0, dy: 0, Rock: 1, Paper: 0, Scissor: 0, state: 'Rock', dir: 0
+            ID: socket.id,
+            x: x, y: y, dx: 0, dy: 0,
+            Rock: 1, Paper: 0, Scissor: 0, state: 'Rock',
+            dir: 0,
+            isHuman: isHuman,
         };
     },
 
@@ -65,11 +74,18 @@ const createGame = () => ({
 
         const match = this.applyPlayerCollision();
         if (match && match.winner && match.loser) {
-            this.sockets[match.winner.ID].emit('win', match);
-            const loser = this.sockets[match.loser.ID];
-            loser.emit('lose', match);
-            this.removePlayer(loser.id);
+            if (match.winner.isHuman) {
+                this.sockets[match.winner.ID].emit('win', match);
+            }
+            if (match.loser.isHuman) {
+                this.sockets[match.loser.ID].emit('lose', match);
+            }
+            this.removePlayer(match.loser.ID);
         };
+
+        this.updateCheat();
+
+        console.log(this.getCurrentState());
 
         Object.values(this.sockets).forEach(socket => {
             const player = this.players[socket.id];
@@ -81,6 +97,10 @@ const createGame = () => ({
 
             socket.emit('update', this.getCurrentState());
         });
+    },
+
+    updateCheat() {
+        this.cheatObject.numPlayers = Object.keys(this.players).length;
     },
 
     getCurrentState() {
