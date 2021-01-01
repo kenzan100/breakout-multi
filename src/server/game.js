@@ -47,7 +47,6 @@ const createGame = () => ({
     },
 
     handleCoinPlacement(socket, input) {
-        console.log(input);
         const player = this.players[socket.id];
         if (player) {
             const offset = this.dirOffset[player.dir];
@@ -84,8 +83,6 @@ const createGame = () => ({
         };
 
         this.updateCheat();
-
-        console.log(this.getCurrentState());
 
         Object.values(this.sockets).forEach(socket => {
             const player = this.players[socket.id];
