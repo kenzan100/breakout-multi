@@ -20,14 +20,18 @@ const createGame = () => ({
         setInterval(this.update.bind(this), 1000 / 60);
     },
 
-    joinGame(socket, isHuman = true, x = 10, y = 10) {
+    joinGame(socket, isHuman = true, x = 10, y = 10, kindIdx = 0) {
         if (isHuman) {
             this.sockets[socket.id] = socket;
         }
+        const table = { Rock: 0, Paper: 0, Scissor: 0 };
+        const kind = Object.keys(table)[kindIdx];
+        table[kind] += 1;
+
         this.players[socket.id] = {
             ID: socket.id,
             x: x, y: y, dx: 0, dy: 0,
-            Rock: 1, Paper: 0, Scissor: 0, state: 'Rock',
+            ...table, state: kind,
             dir: 0,
             isHuman: isHuman,
         };

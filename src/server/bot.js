@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 
+// max being exclusive
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
@@ -7,9 +8,10 @@ function getRandomInt(max) {
 const createBot = () => ({
     start(game) {
         const fakeSocketId = crypto.randomBytes(20).toString('hex');
-        const x = getRandomInt(630);
-        const y = getRandomInt(310);
-        game.joinGame({ id: fakeSocketId }, false, x, y);
+        const x = getRandomInt(631);
+        const y = getRandomInt(311);
+        const kindIdx = getRandomInt(3);
+        game.joinGame({ id: fakeSocketId }, false, x, y, kindIdx);
     },
 
     update() {
